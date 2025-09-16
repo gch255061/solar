@@ -1,4 +1,4 @@
-@library('IkramUlHaq_Shared_Lib') _
+@library('IkramUlHaq-lib') _
 pipeline {
     agent any
     tools {
