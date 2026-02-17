@@ -6,11 +6,21 @@ on:
     branches:
       - main
       - 'feature/*'
-    
+env:
+  MONGO_URI: 'mongodb+srv://supercluster.d83jj.mongodb.net/superData'
+  MONGO_USERNAME: ${{vars.MONGO_USERNAME}}
+  MONGO_PASSWORD: ${{secrets.MONGO_PASSWORD}} 
 jobs:
     unit-testing:
         name: Unit Testing
-        runs-on: ubuntu-latest
+        strategy:
+          matrix:
+            os: [ubuntu-latest, macos-latest]
+            node_version: [20,21,22,23,24]
+            exclude:
+            - os: macos-latest
+              node_version: 20
+        runs-on: ${{matrix.os}}
         steps:
         - name: Checkout Repository
           uses: actions/checkout@v4
@@ -18,7 +28,7 @@ jobs:
         - name: Setup NodeJS Version
           uses: actions/setup-node@v3
           with:
-            node-version: 20
+            node-version: ${{matrix.node_version}}
     
         - name: Install Dependencies
           run: npm install
