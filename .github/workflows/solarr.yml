@@ -43,4 +43,37 @@ jobs:
             name: Mocha-Test-Result-${{ matrix.node_version }}-${{matrix.os}}
             path: test-results.xml
 
+    coverage-testing:
+        name: Coverage Testing
+
+        strategy:
+          matrix:
+            os: [ubuntu-latest, macos-latest]
+            node_version: [20,21,22,23,24]
+            exclude:
+            - os: macos-latest
+              node_version: 20
+        runs-on: ${{matrix.os}}
+        steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v6
+
+        - name: Setup NodeJS Version
+          uses: actions/setup-node@v6
+          with:
+            node-version: ${{matrix.node_version}}
+    
+        - name: Install Dependencies
+          run: npm install
+    
+        - name: Coverage Testing
+          run: npm run coverage
+          
+        - name: Archive Test Result
+          uses: actions/upload-artifact@v4
+          with:
+            name: Mocha-Test-Result-${{ matrix.node_version }}-${{matrix.os}}
+            path: coverage
+            retention-days: 5
+
 
