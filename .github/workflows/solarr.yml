@@ -42,6 +42,7 @@ jobs:
           with:
             name: Mocha-Test-Result-${{ matrix.node_version }}-${{matrix.os}}
             path: test-results.xml
+            overwrite: true
 
     coverage-testing:
         name: Coverage Testing
@@ -75,6 +76,7 @@ jobs:
           with:
             name: Mocha-Test-Result-${{ matrix.node_version }}-${{matrix.os}}
             path: coverage
+            overwrite: true
             retention-days: 5
 
 
