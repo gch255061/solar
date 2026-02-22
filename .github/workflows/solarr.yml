@@ -1,0 +1,103 @@
+name: Solar System Workflowww
+
+on: 
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - 'feature/*'
+env:
+  MONGO_URI: 'mongodb+srv://supercluster.d83jj.mongodb.net/superData'
+  MONGO_USERNAME: ${{vars.MONGO_USERNAME}}
+  MONGO_PASSWORD: ${{secrets.MONGO_PASSWORD}} 
+jobs:
+    unit-testing:
+        name: Unit Testing
+
+        strategy:
+          matrix:
+            os: [ubuntu-latest, macos-latest]
+            node_version: [20,21,22,23,24]
+            exclude:
+            - os: macos-latest
+              node_version: 20
+        runs-on: ${{matrix.os}}
+        steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v6
+
+        - name: Setup NodeJS Version
+          uses: actions/setup-node@v6
+          with:
+            node-version: ${{matrix.node_version}}
+
+        - name: Cache NPM modules
+          uses: actions/cache@v4
+          with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+            path: node_modules
+            key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+    
+        - name: Install Dependencies
+          run: npm install
+
+    
+        - name: Unit Testing
+          id: node-test-case
+          run: npm test
+          
+          
+        - name: Archive Test Result
+          if: always()
+          uses: actions/upload-artifact@v4
+          with:
+            name: Mocha-Test-Result-${{ matrix.node_version }}-${{matrix.os}}
+            path: test-results.xml
+            overwrite: true
+            
+
+    coverage-testing:
+        name: Coverage Testing
+
+        strategy:
+          matrix:
+            os: [ubuntu-latest, macos-latest]
+            node_version: [20,21,22,23,24]
+            exclude:
+            - os: macos-latest
+              node_version: 20
+        runs-on: ${{matrix.os}}
+        steps:
+        - name: Checkout Repository
+          uses: actions/checkout@v6
+
+        - name: Setup NodeJS Version
+          uses: actions/setup-node@v6
+          with:
+            node-version: ${{matrix.node_version}}
+
+        - name: Cache NPM modules
+          uses: actions/cache@v4
+          with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+            path: node_modules
+            key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+
+    
+        - name: Install Dependencies
+          run: npm install
+    
+        - name: Coverage Testing
+          continue-on-error: true
+          run: npm run coverage
+          
+        - name: Archive coverage Result
+          uses: actions/upload-artifact@v4
+          with:
+            name: Code-Coverage-Result-${{ matrix.node_version }}-${{matrix.os}}
+            path: coverage
+            retention-days: 5
+            overwrite: true
+
+
+
