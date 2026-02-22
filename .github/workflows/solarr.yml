@@ -30,6 +30,13 @@ jobs:
           uses: actions/setup-node@v6
           with:
             node-version: ${{matrix.node_version}}
+
+        - name: Cache NPM modules
+          uses: actions/cache@v4
+          with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+            path: node_modules
+            key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
     
         - name: Install Dependencies
           run: npm install
@@ -66,6 +73,13 @@ jobs:
           uses: actions/setup-node@v6
           with:
             node-version: ${{matrix.node_version}}
+
+        - name: Cache NPM modules
+          uses: actions/cache@v4
+          with:
+          # npm cache files are stored in `~/.npm` on Linux/macOS
+            path: node_modules
+            key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
 
     
         - name: Install Dependencies
