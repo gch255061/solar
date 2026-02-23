@@ -103,6 +103,8 @@ jobs:
     docker-login:
       name: Containeriation
       needs: [unit-testing,coverage-testing]
+      permissions: 
+        packages: write
       runs-on: ubuntu-latest
       steps:
       - name: Checkout Repository
