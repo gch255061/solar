@@ -66,7 +66,17 @@ jobs:
 
     coverage-testing:
         name: Coverage Testing
-
+        container: 
+          image: node:24
+        services:
+          mongo-db:
+            image: siddharth67/mongo-db:non-prod
+            options:
+              --name mongo
+            env:
+              MONGO_URI: 'mongodb://mongo:27017/superData'
+              MONGO_USERNAME: non-prod-user
+              MONGO_PASSWORD: non-prod-password
         strategy:
           matrix:
             os: [ubuntu-latest]
@@ -79,10 +89,10 @@ jobs:
         - name: Checkout Repository
           uses: actions/checkout@v6
 
-        - name: Setup NodeJS Version
-          uses: actions/setup-node@v6
-          with:
-            node-version: ${{matrix.node_version}}
+        #- name: Setup NodeJS Version
+        #  uses: actions/setup-node@v6
+        #  with:
+        #    node-version: ${{matrix.node_version}}
 
         - name: Cache NPM modules
           uses: actions/cache@v4
